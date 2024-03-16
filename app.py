@@ -21,10 +21,9 @@ from forms import *
 app = Flask(__name__)
 moment = Moment(app)
 app.config.from_object('config')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app,db)
-
-# TODO: connect to a local postgresql database
 
 #----------------------------------------------------------------------------#
 # Models.
@@ -261,6 +260,30 @@ def artists():
         "name": artist.name
     })
   return render_template('pages/artists.html', artists=data)
+
+@app.route('/insert_artist', methods=['POST'])
+def insert_artist():
+    try:
+        new_artist = Artist(
+            name='Mariana',
+            city='Leira',
+            state='Leira',
+            phone='1234567890',
+            genres=['Jazz', 'Blues'],
+            image_link='link_to_image',
+            facebook_link='link_to_facebook_one'
+        )
+        db.session.add(new_artist)
+        db.session.commit()
+        flash('Artist was successfully listed!')
+    except Exception as e:
+        db.session.rollback()
+        flash('An error occurred. Artist could not be listed.')
+        app.logger.error(f'Error: {e}')
+    finally:
+        db.session.close()
+    
+    return redirect(url_for('index'))
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():

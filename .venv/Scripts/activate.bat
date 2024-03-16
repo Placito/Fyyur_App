@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\mariana\Desktop\LAUNCH_IT\Learn\UDACITY\FullStack\Fyyur\cd0046-SQL-and-Data-Modeling-for-the-Web\.venv
+set VIRTUAL_ENV=C:\Users\mariana\Documents\GitHub\Fyyur_App\.venv
 
 if not defined PROMPT set PROMPT=$P$G
 

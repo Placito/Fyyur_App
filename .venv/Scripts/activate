@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\mariana\Desktop\LAUNCH_IT\Learn\UDACITY\FullStack\Fyyur\cd0046-SQL-and-Data-Modeling-for-the-Web\.venv"
+VIRTUAL_ENV="C:\Users\mariana\Documents\GitHub\Fyyur_App\.venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
