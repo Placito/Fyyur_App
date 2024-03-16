@@ -197,7 +197,6 @@ def show_venue(venue_id):
 
 #  Create Venue
 #  ----------------------------------------------------------------
-
 @app.route('/venues/create', methods=['GET'])
 def create_venue_form():
   form = VenueForm()
@@ -209,7 +208,7 @@ def create_venue_submission():
     # get form data and create 
     form = VenueForm()
     venue = Venue(name=form.name.data, city=form.city.data, state=form.state.data, address=form.address.data,
-                  phone=form.phone.data, image_link=form.image_link.data,genres=form.genres.data, 
+                  phone=form.phone.data, image_link=form.image_link.data, genres=form.genres.data, 
                   facebook_link=form.facebook_link.data, seeking_description=form.seeking_description.data,
                   website=form.website.data, seeking_talent=form.seeking_talent.data)
     
@@ -260,30 +259,6 @@ def artists():
         "name": artist.name
     })
   return render_template('pages/artists.html', artists=data)
-
-@app.route('/insert_artist', methods=['POST'])
-def insert_artist():
-    try:
-        new_artist = Artist(
-            name='Mariana',
-            city='Leira',
-            state='Leira',
-            phone='1234567890',
-            genres=['Jazz', 'Blues'],
-            image_link='link_to_image',
-            facebook_link='link_to_facebook_one'
-        )
-        db.session.add(new_artist)
-        db.session.commit()
-        flash('Artist was successfully listed!')
-    except Exception as e:
-        db.session.rollback()
-        flash('An error occurred. Artist could not be listed.')
-        app.logger.error(f'Error: {e}')
-    finally:
-        db.session.close()
-    
-    return redirect(url_for('index'))
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
