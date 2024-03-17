@@ -55,6 +55,12 @@ class Artist(db.Model):
     facebook_link = db.Column(db.String(120))
     shows = db.relationship('Show', backref='artist', lazy=True)
 
+    def get_past_shows(self):
+        return Show.query.join(Venue).filter(Show.artist_id == self.id).filter(Show.start_time < datetime.now()).all()
+
+    def get_upcoming_shows(self):
+        return Show.query.join(Venue).filter(Show.artist_id == self.id).filter(Show.start_time > datetime.now()).all()
+
     def __repr__(self):
       return f'<Artist {self.id} name: {self.name}>'
 
