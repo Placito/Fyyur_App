@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask_wtf import Form
-from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField, ValidationError 
-from wtforms.validators import DataRequired, AnyOf, URL
+from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, TextAreaField, BooleanField
+from wtforms.validators import DataRequired, AnyOf, URL, Regexp, ValidationError
 import re
 
 class ShowForm(Form):
@@ -83,13 +83,9 @@ class VenueForm(Form):
     address = StringField(
         'address', validators=[DataRequired()]
     )
-    ##function to validate phone number
-    def validate_phone(form, field):
-        us_phone_num = r'^(\d{3})-(\d{3})-(\d{4})$'
-        match = re.search(us_phone_num, field.data)
-        if not match:
-            raise ValidationError('Error, phone number must be in format xxx-xxx-xxxx')
-    phone = StringField('phone', validators=[validate_phone])
+    phone = StringField(
+        'phone', validators=[DataRequired(), Regexp("^[0-9]*$", message="Phone number should only contain digits")]
+    )
     image_link = StringField(
         'image_link'
     )
@@ -192,7 +188,7 @@ class ArtistForm(Form):
         ]
     )
     phone = StringField(
-        'phone'
+        'phone', validators=[DataRequired(), Regexp("^[0-9]*$", message="Phone number should only contain digits")]
     )
     image_link = StringField(
         'image_link'
@@ -224,4 +220,12 @@ class ArtistForm(Form):
     facebook_link = StringField(
         'facebook_link', validators=[URL()]
     )
-    
+    website_link = StringField(
+        'website_link'
+     )
+
+    seeking_venue = BooleanField( 'seeking_venue' )
+
+    seeking_description = StringField(
+            'seeking_description'
+     )
