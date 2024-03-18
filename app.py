@@ -6,6 +6,7 @@ import json
 import dateutil.parser
 import babel
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
+from sqlalchemy.exc import SQLAlchemyError
 import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
@@ -399,7 +400,7 @@ def shows():
   shows = Show.query.order_by(db.desc(Show.start_time))
 
   data = []
-
+  
   for show in shows:
     data.append({
         "venue_id": show.venue_id,
@@ -420,21 +421,28 @@ def create_shows():
 
 @app.route('/shows/create', methods=['POST'])
 def create_show_submission():
-  try:
-    show = Show(artist_id=request.form['artist_id'], venue_id=request.form['venue_id'],
-                start_time=request.form['start_time'])
+    artist_id = request.form.get('artist_id')
+    venue_id = request.form.get('venue_id')
+    start_time = request.form.get('start_time')
 
-    db.session.add(show)
-    db.session.commit()
+    # Validate artist_id and venue_id are not empty and are digits
+    if not artist_id.isdigit() or not venue_id.isdigit():
+        flash('Artist ID and Venue ID must be valid integers.', 'error')
+        return redirect(url_for('forms/new_show.html'))  # Redirect back to form on validation failure
 
-    flash('Show was successfully listed!')
-  except:
-    db.session.rollback()
-    flash('An error occurred. Show could not be listed.')
-  finally:
-    db.session.close()
-
-  return render_template('pages/home.html')
+    try:
+        # Validation passed, now create Show object
+        show = Show(artist_id=int(artist_id), venue_id=int(venue_id), start_time=start_time)
+        db.session.add(show)
+        db.session.commit()
+        flash('Show was successfully listed!', 'success')
+        return redirect(url_for('index'))  # Assuming you have an 'index' route
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        flash(f'An error occurred. Show could not be listed. Error: {str(e)}', 'error')
+        return render_template('pages/home.html'), 500
+    finally:
+        db.session.close()
 
 @app.errorhandler(404)
 def not_found_error(error):
