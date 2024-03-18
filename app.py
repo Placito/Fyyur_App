@@ -101,36 +101,25 @@ def show_venue(venue_id):
   upcoming_shows = []
   current_time = datetime.now()
 
-  for show in shows:
-    data = {
-          "artist_id": show.artist_id,
-          "artist_name": show.artist.name,
-           "artist_image_link": show.artist.image_link,
-           "start_time": format_datetime(str(show.start_time))
-        }
-    if show.start_time > current_time:
-      upcoming_shows.append(data)
+  for show in venue.shows:
+    temp_show = {
+        'artist_id': show.artist_id,
+        'artist_name': show.artist.name,
+        'artist_image_link': show.artist.image_link,
+        'start_time': show.start_time.strftime("%m/%d/%Y, %H:%M")
+    }
+    if show.start_time <= datetime.now():
+        past_shows.append(temp_show)
     else:
-      past_shows.append(data)
+        upcoming_shows.append(temp_show)
 
-  data={
-    "id": venue.id,
-    "name": venue.name,
-    "genres": venue.genres,
-    "address": venue.address,
-    "city": venue.city,
-    "state": venue.state,
-    "phone": venue.phone,
-    "website": venue.website,
-    "facebook_link": venue.facebook_link,
-    "seeking_talent": venue.seeking_talent,
-    "seeking_description":venue.seeking_description,
-    "image_link": venue.image_link,
-    "past_shows": past_shows,
-    "upcoming_shows": upcoming_shows,
-    "past_shows_count": len(past_shows),
-    "upcoming_shows_count": len(upcoming_shows)
-  }
+  # object class to dict
+  data = vars(venue)
+
+  data['past_shows'] = past_shows
+  data['upcoming_shows'] = upcoming_shows
+  data['past_shows_count'] = len(past_shows)
+  data['upcoming_shows_count'] = len(upcoming_shows)
 
   return render_template('pages/show_venue.html', venue=data)
 
