@@ -1,79 +1,50 @@
-#----------------------------------------------------------------------------#
-# Imports
-#----------------------------------------------------------------------------#
+from app import db
 
-from flask import Flask
-from flask_migrate import Migrate
-from flask_moment import Moment
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime, timezone
 
-#----------------------------------------------------------------------------#
-# App Config.
-#----------------------------------------------------------------------------#
-
-app = Flask(__name__)
-moment = Moment(app)
-app.config.from_object('config')
-db = SQLAlchemy(app)
-migrate = Migrate(app,db)
-
-#----------------------------------------------------------------------------#
-# Models.
-#----------------------------------------------------------------------------#
 class Venue(db.Model):
-    __tablename__ = 'Venue'
-
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    city = db.Column(db.String(120), nullable=False)
-    state = db.Column(db.String(120), nullable=False)
-    address = db.Column(db.String(120), nullable=False)
+    name = db.Column(db.String)
+    genres = db.Column(db.ARRAY(db.String()))
+    address = db.Column(db.String(120))
+    city = db.Column(db.String(120))
+    state = db.Column(db.String(120))
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
-    genres = db.Column("genres", db.ARRAY(db.String()), nullable=False)
     facebook_link = db.Column(db.String(120))
-    website = db.Column(db.String(250))
-    seeking_talent = db.Column(db.Boolean, default=True)
-    seeking_description = db.Column(db.String(250))
-    shows = db.relationship('Show', backref='venue', lazy=True)
+    website = db.Column(db.String(120))
+    seeking_talent = db.Column(db.Boolean)
+    seeking_description = db.Column(db.String(500))
+    shows = db.relationship('Show', backref="venue", lazy=True)
 
     def __repr__(self):
-      return f'<Venue {self.id} name: {self.name}>'
+        return '<Venue {}>'.format(self.name)
 
 
 class Artist(db.Model):
-    __tablename__ = 'Artist'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    city = db.Column(db.String(120), nullable=False)
-    state = db.Column(db.String(120), nullable=False)
+    name = db.Column(db.String)
+    genres = db.Column(db.ARRAY(db.String))
+    city = db.Column(db.String(120))
+    state = db.Column(db.String(120))
     phone = db.Column(db.String(120))
-    genres = db.Column("genres", db.ARRAY(db.String()), nullable=False)
+    website = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-    shows = db.relationship('Show', backref='artist', lazy=True)
-
-    def get_past_shows(self):
-        return Show.query.join(Venue).filter(Show.artist_id == self.id).filter(Show.start_time < datetime.now()).all()
-
-    def get_upcoming_shows(self):
-        return Show.query.join(Venue).filter(Show.artist_id == self.id).filter(Show.start_time > datetime.now()).all()
+    seeking_venue = db.Column(db.Boolean)
+    seeking_description = db.Column(db.String(500))
+    shows = db.relationship('Show', backref="artist", lazy=True)
 
     def __repr__(self):
-      return f'<Artist {self.id} name: {self.name}>'
+        return '<Artist {}>'.format(self.name)
+
 
 class Show(db.Model):
-    __tablename__ = 'Show'
-
     id = db.Column(db.Integer, primary_key=True)
-    artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'), nullable=False)
-    venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'), nullable=False)
-    start_time = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    artist_id = db.Column(db.Integer, db.ForeignKey(
+        'artist.id'), nullable=False)
+    venue_id = db.Column(db.Integer, db.ForeignKey('venue.id'), nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False)
 
     def __repr__(self):
-      return f'<Show {self.id}, Artist {self.artist_id}, Venue {self.venue_id}>'
-    
-def test():
-    return ""
+        return '<Show {}{}>'.format(self.artist_id, self.venue_id)
