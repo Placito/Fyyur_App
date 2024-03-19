@@ -227,7 +227,7 @@ class ArtistForm(FlaskForm):
     facebook_link = StringField(
         'facebook_link', validators=[URL()]
     )
-    website_link = StringField(
+    website = StringField(
         'website_link'
      )
 
