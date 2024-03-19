@@ -1,13 +1,7 @@
 from datetime import datetime
-<<<<<<< HEAD
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField, ValidationError 
-from wtforms.validators import DataRequired, AnyOf, URL
-=======
-from flask_wtf import Form
-from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, TextAreaField, BooleanField
-from wtforms.validators import DataRequired, AnyOf, URL, Regexp, ValidationError
->>>>>>> 4b1a5bb766a7bdd0472a12e5052824c7d1549d16
+from wtforms.validators import DataRequired, Regexp, URL
 import re
 
 class ShowForm(FlaskForm):
@@ -22,7 +16,6 @@ class ShowForm(FlaskForm):
         validators=[DataRequired()],
         default= datetime.today()
     )
-
 class VenueForm(FlaskForm):
     name = StringField(
         'name', validators=[DataRequired()]
@@ -90,8 +83,12 @@ class VenueForm(FlaskForm):
         'address', validators=[DataRequired()]
     )
     phone = StringField(
-        'phone', validators=[DataRequired(), Regexp("^[0-9]*$", message="Phone number should only contain digits")]
-    )
+    'phone', 
+    validators=[
+        DataRequired(),
+        Regexp("^[0-9]*$", message="Phone number should only contain digits")
+    ]
+)
     image_link = StringField(
         'image_link'
     )
@@ -194,8 +191,12 @@ class ArtistForm(FlaskForm):
         ]
     )
     phone = StringField(
-        'phone', validators=[DataRequired(), Regexp("^[0-9]*$", message="Phone number should only contain digits")]
-    )
+    'phone', 
+    validators=[
+        DataRequired(),
+        Regexp("^[0-9]*$", message="Phone number should only contain digits")
+    ]
+)
     image_link = StringField(
         'image_link'
     )
